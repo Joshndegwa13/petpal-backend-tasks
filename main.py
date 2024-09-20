@@ -1,6 +1,4 @@
-# main.py
 from datetime import datetime
-
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
@@ -10,6 +8,7 @@ import crud
 from database import SessionLocal, engine
 from models import Base
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn  # Import Uvicorn
 
 # Create the database tables
 Base.metadata.create_all(bind=engine)
@@ -18,7 +17,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],  # Allow all origins for now; adjust based on your frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -32,6 +31,7 @@ def get_db():
     finally:
         db.close()
 
+# API routes
 @app.post("/tasks/", response_model=schemas.Task)
 def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
     db_task = models.Task(
@@ -87,3 +87,7 @@ def get_tasks(db: Session = Depends(get_db)):
 @app.get("/tasks/{task_id}/completions", response_model=List[schemas.TaskCompletion])
 def get_task_completions(task_id: int, db: Session = Depends(get_db)):
     return crud.get_task_completions(db, task_id)
+
+# Make sure Uvicorn is run when using Vercel
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
