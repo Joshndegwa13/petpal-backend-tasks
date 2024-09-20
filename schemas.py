@@ -1,5 +1,3 @@
-# schemas.py
-
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
@@ -15,7 +13,7 @@ class TaskCompletion(TaskCompletionBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Updated line
 
 class TaskBase(BaseModel):
     description: str
@@ -31,7 +29,7 @@ class Task(TaskBase):
     completions: List[TaskCompletion] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Updated line
 
 class VetVisitBase(BaseModel):
     date: datetime
@@ -44,4 +42,4 @@ class VetVisit(VetVisitBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Updated line

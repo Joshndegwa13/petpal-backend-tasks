@@ -30,6 +30,11 @@ def get_db():
     finally:
         db.close()
 
+# Root route to avoid 404 on root access
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the PetPal API!"}
+
 # API routes
 @app.post("/tasks/", response_model=schemas.Task)
 def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
